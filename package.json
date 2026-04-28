@@ -1,0 +1,21 @@
+{
+  "name": "shadowzdex-subgraph",
+  "version": "0.1.0",
+  "description": "ShadowzDex IntentRouter subgraph — volume, fees, unique users for analytics + DEX listings",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "codegen": "graph codegen subgraph.yaml",
+    "codegen:base": "graph codegen subgraph.base.yaml",
+    "build": "graph build subgraph.yaml",
+    "build:base": "graph build subgraph.base.yaml",
+    "deploy:arb": "goldsky subgraph deploy shadowzdex-arb/v0.1.0 --path . --from-conf subgraph.yaml",
+    "deploy:base": "goldsky subgraph deploy shadowzdex-base/v0.1.0 --path . --from-conf subgraph.base.yaml",
+    "tag:arb": "goldsky subgraph tag create shadowzdex-arb/v0.1.0 --tag latest",
+    "tag:base": "goldsky subgraph tag create shadowzdex-base/v0.1.0 --tag latest"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "0.93.3",
+    "@graphprotocol/graph-ts": "0.36.0"
+  }
+}

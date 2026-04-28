@@ -1,0 +1,59 @@
+type Swap @entity(immutable: true) {
+  id: Bytes!
+  txHash: Bytes!
+  logIndex: BigInt!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  user: User!
+  venue: Bytes!
+  tokenIn: Bytes!
+  tokenOut: Bytes!
+  amountIn: BigInt!
+  amountOut: BigInt!
+  fee: BigInt!
+}
+
+type BridgeFee @entity(immutable: true) {
+  id: Bytes!
+  txHash: Bytes!
+  logIndex: BigInt!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  user: User!
+  token: Bytes!
+  amount: BigInt!
+  tier: Int!
+}
+
+type User @entity {
+  id: Bytes!
+  firstSeen: BigInt!
+  lastSeen: BigInt!
+  swapCount: BigInt!
+  bridgeFeeCount: BigInt!
+  swaps: [Swap!]! @derivedFrom(field: "user")
+  bridgeFees: [BridgeFee!]! @derivedFrom(field: "user")
+}
+
+type Venue @entity {
+  id: Bytes!
+  swapCount: BigInt!
+  totalFee: BigInt!
+}
+
+type RouterStat @entity {
+  id: Bytes!
+  swapCount: BigInt!
+  bridgeFeeCount: BigInt!
+  uniqueUsers: BigInt!
+  totalFee: BigInt!
+  lastUpdated: BigInt!
+}
+
+type DayStat @entity {
+  id: Bytes!
+  date: Int!
+  swapCount: BigInt!
+  uniqueUsers: BigInt!
+  totalFee: BigInt!
+}

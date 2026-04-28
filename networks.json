@@ -1,0 +1,19 @@
+{
+  "arbitrum-one": {
+    "IntentRouter": {
+      "address": "0xE80a2d3611EFdA4AA594A427eF687f89F36FD1Ee",
+      "startBlock": 455776834
+    },
+    "IntentRouterLegacy": {
+      "address": "0x49B99E4B9743c8082be12bfDe6DB39E8a75B7817",
+      "startBlock": 454862471,
+      "endBlock": 455776834
+    }
+  },
+  "base": {
+    "IntentRouter": {
+      "address": "0x1BEf947466AFfE828363c669Aaf26964CBeeCA97",
+      "startBlock": 45000532
+    }
+  }
+}

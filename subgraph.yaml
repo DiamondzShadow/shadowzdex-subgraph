@@ -1,0 +1,60 @@
+specVersion: 1.0.0
+description: ShadowzDex IntentRouter — swap volume, fees, and unique users for analytics + DEX listings (CMC / CoinGecko).
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: IntentRouter
+    network: arbitrum-one
+    source:
+      address: "0xE80a2d3611EFdA4AA594A427eF687f89F36FD1Ee"
+      abi: IntentRouter
+      startBlock: 455776834
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/intent-router.ts
+      entities:
+        - Swap
+        - BridgeFee
+        - User
+        - Venue
+        - RouterStat
+        - DayStat
+      abis:
+        - name: IntentRouter
+          file: ./abis/IntentRouter.json
+      eventHandlers:
+        - event: SwapExecuted(indexed address,indexed bytes32,address,address,uint256,uint256,uint256)
+          handler: handleSwapExecuted
+        - event: BridgeFeeCollected(indexed address,address,uint256,uint8)
+          handler: handleBridgeFeeCollected
+  - kind: ethereum/contract
+    name: IntentRouterLegacy
+    network: arbitrum-one
+    source:
+      address: "0x49B99E4B9743c8082be12bfDe6DB39E8a75B7817"
+      abi: IntentRouter
+      startBlock: 454862471
+      endBlock: 455776834
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/intent-router.ts
+      entities:
+        - Swap
+        - BridgeFee
+        - User
+        - Venue
+        - RouterStat
+        - DayStat
+      abis:
+        - name: IntentRouter
+          file: ./abis/IntentRouter.json
+      eventHandlers:
+        - event: SwapExecuted(indexed address,indexed bytes32,address,address,uint256,uint256,uint256)
+          handler: handleSwapExecuted
+        - event: BridgeFeeCollected(indexed address,address,uint256,uint8)
+          handler: handleBridgeFeeCollected

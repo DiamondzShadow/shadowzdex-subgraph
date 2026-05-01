@@ -1,0 +1,32 @@
+specVersion: 1.0.0
+description: ShadowzDex IntentRouter on Polygon — swap volume, fees, and unique users.
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: IntentRouter
+    network: matic
+    source:
+      address: "0x7949D0dcf52c472956d22E74275061f9B93cA0b7"
+      abi: IntentRouter
+      startBlock: 86258000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/intent-router.ts
+      entities:
+        - Swap
+        - BridgeFee
+        - User
+        - Venue
+        - RouterStat
+        - DayStat
+      abis:
+        - name: IntentRouter
+          file: ./abis/IntentRouter.json
+      eventHandlers:
+        - event: SwapExecuted(indexed address,indexed bytes32,address,address,uint256,uint256,uint256)
+          handler: handleSwapExecuted
+        - event: BridgeFeeCollected(indexed address,address,uint256,uint8)
+          handler: handleBridgeFeeCollected

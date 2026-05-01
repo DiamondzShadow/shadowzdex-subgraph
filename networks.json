@@ -15,5 +15,29 @@
       "address": "0x1BEf947466AFfE828363c669Aaf26964CBeeCA97",
       "startBlock": 45000532
     }
+  },
+  "matic": {
+    "IntentRouter": {
+      "address": "0x7949D0dcf52c472956d22E74275061f9B93cA0b7",
+      "startBlock": 86258000
+    }
+  },
+  "optimism": {
+    "IntentRouter": {
+      "address": "0xb63D4deb58D9f24ad8143be663b6D0e1974028d8",
+      "startBlock": 151018000
+    }
+  },
+  "avalanche": {
+    "IntentRouter": {
+      "address": "0x47D3fb05E195E2C51458F19edBaC8f93F845607A",
+      "startBlock": 84342000
+    }
+  },
+  "hyperevm": {
+    "IntentRouter": {
+      "address": "0x6E2E00F12D12379191dBD8B463A1A69531c873F0",
+      "startBlock": 33942000
+    }
   }
 }

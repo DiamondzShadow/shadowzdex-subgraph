@@ -1,0 +1,32 @@
+specVersion: 1.0.0
+description: ShadowzDex IntentRouter on OP Mainnet — swap volume, fees, and unique users.
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: IntentRouter
+    network: optimism
+    source:
+      address: "0xb63D4deb58D9f24ad8143be663b6D0e1974028d8"
+      abi: IntentRouter
+      startBlock: 151018000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/intent-router.ts
+      entities:
+        - Swap
+        - BridgeFee
+        - User
+        - Venue
+        - RouterStat
+        - DayStat
+      abis:
+        - name: IntentRouter
+          file: ./abis/IntentRouter.json
+      eventHandlers:
+        - event: SwapExecuted(indexed address,indexed bytes32,address,address,uint256,uint256,uint256)
+          handler: handleSwapExecuted
+        - event: BridgeFeeCollected(indexed address,address,uint256,uint8)
+          handler: handleBridgeFeeCollected

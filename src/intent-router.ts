@@ -74,7 +74,7 @@ function loadOrCreateToken(addr: Bytes, ts: BigInt): Token {
     t.lastPriceUsd = ZERO_BD;
     t.lastSwapVolumeUsd = ZERO_BD;
     t.totalVolumeUsd = ZERO_BD;
-    t.swapCount = ZERO;
+    t.pricedSwapCount = ZERO;
     t.lastUpdated = ts;
   }
   return t;
@@ -93,7 +93,7 @@ function recordTokenPrice(
   token.lastPriceUsd = priceUsd;
   token.lastSwapVolumeUsd = volumeUsd;
   token.totalVolumeUsd = token.totalVolumeUsd.plus(volumeUsd);
-  token.swapCount = token.swapCount.plus(ONE);
+  token.pricedSwapCount = token.pricedSwapCount.plus(ONE);
   token.lastUpdated = ts;
   token.save();
 

@@ -12,7 +12,8 @@ synced_pct() { # $1 = subgraph/version  -> integer percent (floor), or empty
   # version string (which contains '.' and could contain regex metachars) as a regex.
   goldsky subgraph list 2>/dev/null \
     | awk -v target="* $1" '
-        index($0, target) == 1 { found = 1; next }
+        { line = $0; sub(/[ \t\r]+$/, "", line) }
+        line == target { found = 1; next }
         found && /Synced:/ { gsub(/%/, ""); print int($2); exit }
       '
 }

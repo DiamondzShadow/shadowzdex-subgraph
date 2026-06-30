@@ -19,8 +19,10 @@ Legacy router is bounded with `endBlock` so we backfill pre-migration history wi
 - `Venue` — per-venue swap count and accumulated fee (keyed by the `bytes32` venue id used by IntentRouter)
 - `RouterStat` — global counters (singleton, id = `"router"`)
 - `DayStat` — per-UTC-day swap count, unique users, fees
+- `Token` — per-token rollup: last USD price, last-swap + total USD volume, swap count
+- `TokenDayData` — per-token daily OHLC (USD) + USD volume, keyed by token/day
 
-`amountIn` / `amountOut` / `fee` / `amount` are stored as raw `BigInt` in token units. USD pricing is intentionally **not** in the subgraph — apply it client-side or in a follow-up enrichment layer (avoids baking a price oracle into the indexer).
+`amountIn` / `amountOut` / `fee` / `amount` are stored as raw `BigInt` in token units. **USD price** is derived on-chain from *execution price* — for any swap where exactly one side is native USDC, `price = usdcAmount / tokenAmount` (decimal-adjusted; token decimals read via an ERC20 binding). This is deliberately **not** an oracle: it records the real price at which curve/router swaps actually executed. Tokens that never trade against USDC simply get no `TokenDayData`.
 
 ## Local setup
 
@@ -82,5 +84,7 @@ These are the fields each platform's reviewer typically asks for. All come strai
 - 24h / 7d / 30d unique users → bucket by `User.firstSeen` or aggregate `dayStats.uniqueUsers`
 - Total fees collected → `routerStat.totalFee`
 - Per-venue routing breakdown → `venues(orderBy: swapCount)`
+- Per-token price chart → `tokenDayDatas(where: { token: $addr }, orderBy: date)` (OHLC + USD volume)
+- Latest token price → `token(id: $addr).lastPriceUsd`
 
-USD volume needs a price layer on top — recommend a small Cloudflare Worker / Edge Function that joins Swap entities with a token price feed (CoinGecko `/simple/price` keyed on `tokenIn`).
+USD price/volume for tokens that trade against USDC is now derived on-chain (see `Token` / `TokenDayData`). For tokens with no USDC route, layer an external price feed on top of `Swap` entities (e.g. a Cloudflare Worker joining a CoinGecko price keyed on `tokenIn`).

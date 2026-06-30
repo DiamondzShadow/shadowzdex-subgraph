@@ -1,4 +1,4 @@
-import { BigInt, BigDecimal, Bytes, Address, log } from "@graphprotocol/graph-ts";
+import { BigInt, BigDecimal, Bytes, Address, dataSource, log } from "@graphprotocol/graph-ts";
 import {
   SwapExecuted as SwapExecutedEvent,
   BridgeFeeCollected as BridgeFeeCollectedEvent,
@@ -21,24 +21,37 @@ const ROUTER_STAT_ID = Bytes.fromUTF8("router");
 const SECONDS_PER_DAY = 86400;
 const ZERO_BD = BigDecimal.zero();
 
-// Known USD stablecoins (native USDC) across the deployed networks. Addresses are
-// globally unique, so one set works for the shared mapping. A swap is "USD-priced"
-// when exactly one side is in this set; price = usdcSide / tokenSide (decimal-adj).
-const USDC = new Map<string, boolean>();
-USDC.set("0xaf88d065e77c8cc2239327c5edb3a432268e5831", true); // Arbitrum
-USDC.set("0x3c499c542cef5e3811e1192ce70d8cc03d5c3359", true); // Polygon
-USDC.set("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", true); // Base
 const USDC_DECIMALS = 6;
+// Max decimals we'll scale by — guards exponentToBigDecimal against a hostile/broken
+// token reporting an absurd decimals() (uint8 up to 255), which would make the scaling
+// loop run away on every swap. 36 covers every real ERC20.
+const MAX_DECIMALS = 36;
+
+// Native USDC for the network this deployment indexes. The mapping file is shared
+// across the arbitrum/base/polygon manifests, so detection MUST be network-specific —
+// a single global set could misclassify a token that collides with another chain's
+// USDC address. Resolved once per network via dataSource.network().
+function usdcForNetwork(): string {
+  let net = dataSource.network();
+  if (net == "arbitrum-one") return "0xaf88d065e77c8cc2239327c5edb3a432268e5831";
+  if (net == "matic") return "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359";
+  if (net == "base") return "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
+  return "";
+}
 
 function isUsdc(addr: Bytes): boolean {
-  return USDC.has(addr.toHexString());
+  let usdc = usdcForNetwork();
+  return usdc != "" && addr.toHexString() == usdc;
 }
 
 // 10^decimals as a BigDecimal, for scaling raw token amounts to human units.
 function exponentToBigDecimal(decimals: i32): BigDecimal {
+  let d = decimals;
+  if (d < 0) d = 0;
+  if (d > MAX_DECIMALS) d = MAX_DECIMALS;
   let bd = BigDecimal.fromString("1");
   let ten = BigDecimal.fromString("10");
-  for (let i = 0; i < decimals; i++) bd = bd.times(ten);
+  for (let i = 0; i < d; i++) bd = bd.times(ten);
   return bd;
 }
 
@@ -67,16 +80,16 @@ function loadOrCreateToken(addr: Bytes, ts: BigInt): Token {
   return t;
 }
 
-// Record a USD-priced swap for `token` (the non-USDC side). `priceUsd` is USD per
-// token, `volumeUsd` the USDC value traded. Updates the Token rollup + OHLC day bar.
+// Record a USD-priced swap for `token` (the non-USDC side, already loaded by the
+// caller). `priceUsd` is USD per token, `volumeUsd` the USDC value traded. Updates the
+// Token rollup + OHLC day bar.
 function recordTokenPrice(
-  tokenAddr: Bytes,
+  token: Token,
   priceUsd: BigDecimal,
   volumeUsd: BigDecimal,
   ts: BigInt,
   day: i32,
 ): void {
-  let token = loadOrCreateToken(tokenAddr, ts);
   token.lastPriceUsd = priceUsd;
   token.lastSwapVolumeUsd = volumeUsd;
   token.totalVolumeUsd = token.totalVolumeUsd.plus(volumeUsd);
@@ -84,7 +97,7 @@ function recordTokenPrice(
   token.lastUpdated = ts;
   token.save();
 
-  let id = tokenAddr.concatI32(day);
+  let id = token.id.concatI32(day);
   let bar = TokenDayData.load(id);
   if (bar == null) {
     bar = new TokenDayData(id);
@@ -119,14 +132,14 @@ function trackSwapPrice(event: SwapExecutedEvent, day: i32): void {
     let other = loadOrCreateToken(tokenOut, ts);
     let qty = toDecimal(event.params.amountOut, other.decimals);
     if (qty.equals(ZERO_BD)) return;
-    recordTokenPrice(tokenOut, usd.div(qty), usd, ts, day);
+    recordTokenPrice(other, usd.div(qty), usd, ts, day);
   } else {
     // Sold tokenIn for USDC.
     let usd = toDecimal(event.params.amountOut, USDC_DECIMALS);
     let other = loadOrCreateToken(tokenIn, ts);
     let qty = toDecimal(event.params.amountIn, other.decimals);
     if (qty.equals(ZERO_BD)) return;
-    recordTokenPrice(tokenIn, usd.div(qty), usd, ts, day);
+    recordTokenPrice(other, usd.div(qty), usd, ts, day);
   }
 }
 

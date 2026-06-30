@@ -7,12 +7,16 @@
   "scripts": {
     "codegen": "graph codegen subgraph.yaml",
     "codegen:base": "graph codegen subgraph.base.yaml",
+    "codegen:polygon": "graph codegen subgraph.polygon.yaml",
     "build": "graph build subgraph.yaml",
     "build:base": "graph build subgraph.base.yaml",
-    "deploy:arb": "goldsky subgraph deploy shadowzdex-arb/v0.1.0 --path . --from-conf subgraph.yaml",
-    "deploy:base": "goldsky subgraph deploy shadowzdex-base/v0.1.0 --path . --from-conf subgraph.base.yaml",
-    "tag:arb": "goldsky subgraph tag create shadowzdex-arb/v0.1.0 --tag latest",
-    "tag:base": "goldsky subgraph tag create shadowzdex-base/v0.1.0 --tag latest"
+    "build:polygon": "graph build subgraph.polygon.yaml",
+    "deploy:arb": "graph build subgraph.yaml && goldsky subgraph deploy shadowzdex-arb/v0.2.1 --path build",
+    "deploy:base": "graph build subgraph.base.yaml && goldsky subgraph deploy shadowzdex-base/v0.2.1 --path build",
+    "deploy:polygon": "graph build subgraph.polygon.yaml && goldsky subgraph deploy shadowzdex-polygon/v0.1.1 --path build",
+    "tag:arb": "goldsky subgraph tag create shadowzdex-arb/v0.2.1 --tag latest",
+    "tag:base": "goldsky subgraph tag create shadowzdex-base/v0.2.1 --tag latest",
+    "tag:polygon": "goldsky subgraph tag create shadowzdex-polygon/v0.1.1 --tag latest"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "0.93.3",

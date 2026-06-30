@@ -22,9 +22,13 @@ dataSources:
         - Venue
         - RouterStat
         - DayStat
+        - Token
+        - TokenDayData
       abis:
         - name: IntentRouter
           file: ./abis/IntentRouter.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: SwapExecuted(indexed address,indexed bytes32,address,address,uint256,uint256,uint256)
           handler: handleSwapExecuted

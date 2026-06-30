@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Poll Goldsky until shadowzdex-arb/v0.2.2 and shadowzdex-base/v0.2.2 finish
-# syncing, then move their `latest` tags to v0.2.1. Runs in the background so the
+# syncing, then move their `latest` tags to v0.2.2. Runs in the background so the
 # `latest` endpoint (used by the live stats/activity charts) is never pointed at a
 # half-indexed version. Polygon was already tagged at deploy.
 set -uo pipefail

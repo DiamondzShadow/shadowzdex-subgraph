@@ -68,9 +68,12 @@ type Token @entity {
   id: Bytes! # token address
   symbol: String!
   decimals: Int!
-  lastPriceUsd: BigDecimal!
-  lastSwapVolumeUsd: BigDecimal!
-  totalVolumeUsd: BigDecimal!
+  lastPriceUsd: BigDecimal! # USD per token from the most recent priced swap
+  lastSwapVolumeUsd: BigDecimal! # USDC value of that swap
+  totalVolumeUsd: BigDecimal! # cumulative USDC value of all priced swaps
+  # NOTE: counts ONLY swaps that produced a USD price (exactly one side was USDC) —
+  # NOT every swap touching this token. Distinct from User/RouterStat/DayStat.swapCount,
+  # which count all router swaps.
   swapCount: BigInt!
   lastUpdated: BigInt!
 }

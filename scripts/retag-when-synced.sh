@@ -6,11 +6,14 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 
-synced_pct() { # $1 = subgraph/version  -> integer percent (floor), or -1
+synced_pct() { # $1 = subgraph/version  -> integer percent (floor), or empty
+  # Literal (non-regex) prefix match on the "* <name>/<version>" header line, then
+  # read the first "Synced: NN%" that follows. Using index() avoids treating the
+  # version string (which contains '.' and could contain regex metachars) as a regex.
   goldsky subgraph list 2>/dev/null \
     | awk -v target="* $1" '
-        $0 ~ target {found=1}
-        found && /Synced:/ { gsub(/%/,""); print int($2); exit }
+        index($0, target) == 1 { found = 1; next }
+        found && /Synced:/ { gsub(/%/, ""); print int($2); exit }
       '
 }
 

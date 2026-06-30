@@ -1,5 +1,5 @@
 specVersion: 1.0.0
-description: ShadowzDex IntentRouter — swap volume, fees, and unique users for analytics + DEX listings (CMC / CoinGecko).
+description: ShadowzDex IntentRouter (Arbitrum) — swap volume, fees, unique users, and per-token USD price/OHLC for analytics + DEX listings (CMC / CoinGecko).
 schema:
   file: ./schema.graphql
 dataSources:

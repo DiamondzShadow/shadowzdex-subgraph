@@ -87,5 +87,5 @@ type TokenDayData @entity {
   low: BigDecimal!
   close: BigDecimal!
   volumeUsd: BigDecimal!
-  swapCount: BigInt!
+  swapCount: BigInt! # priced swaps in this day bar (one side USDC)
 }

@@ -57,3 +57,32 @@ type DayStat @entity {
   uniqueUsers: BigInt!
   totalFee: BigInt!
 }
+
+# ── Price tracking ─────────────────────────────────────────────────────────
+# USD price is derived from any swap where one side is a known USD stablecoin
+# (USDC). For a token X traded vs USDC, price = usdcAmount / tokenAmount, with
+# both sides decimal-adjusted. Curve buys/sells route through the IntentRouter,
+# so this captures real on-chain execution price — no oracle.
+
+type Token @entity {
+  id: Bytes! # token address
+  symbol: String!
+  decimals: Int!
+  lastPriceUsd: BigDecimal!
+  lastSwapVolumeUsd: BigDecimal!
+  totalVolumeUsd: BigDecimal!
+  swapCount: BigInt!
+  lastUpdated: BigInt!
+}
+
+type TokenDayData @entity {
+  id: Bytes! # token address ++ day index
+  token: Token!
+  date: Int! # days since unix epoch
+  open: BigDecimal!
+  high: BigDecimal!
+  low: BigDecimal!
+  close: BigDecimal!
+  volumeUsd: BigDecimal!
+  swapCount: BigInt!
+}

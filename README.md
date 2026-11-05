@@ -6,7 +6,8 @@ Goldsky-hosted subgraph for the ShadowzDex `IntentRouter` — indexes `SwapExecu
 
 | Network | Role | Address | Start block |
 |---|---|---|---|
-| Arbitrum One (42161) | IntentRouter (current, v2-11field) | `0xE80a2d3611EFdA4AA594A427eF687f89F36FD1Ee` | 455776834 |
+| Arbitrum One (42161) | IntentRouter (current, v3.1) | `0x893434c1D839eC3B8660774Aa913C35C4b38Eb44` | 501000464 |
+| Arbitrum One (42161) | IntentRouter (v2-11field, frozen) | `0xE80a2d3611EFdA4AA594A427eF687f89F36FD1Ee` | 455776834 |
 | Arbitrum One (42161) | IntentRouter (legacy, frozen) | `0x49B99E4B9743c8082be12bfDe6DB39E8a75B7817` | 454862471 → 455776834 |
 | Base (8453) | IntentRouter | `0x1BEf947466AFfE828363c669Aaf26964CBeeCA97` | 45000532 |
 

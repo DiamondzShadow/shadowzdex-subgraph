@@ -8,6 +8,10 @@
       "address": "0x49B99E4B9743c8082be12bfDe6DB39E8a75B7817",
       "startBlock": 454862471,
       "endBlock": 455776834
+    },
+    "IntentRouterV31": {
+      "address": "0x893434c1D839eC3B8660774Aa913C35C4b38Eb44",
+      "startBlock": 501000464
     }
   },
   "base": {
